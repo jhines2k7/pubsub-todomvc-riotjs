@@ -30,7 +30,7 @@
                 let todos = [];
 
                 let lastAddEvent = eventStore.events.filter( (event) => {
-                    return event.topic === 'todo.add';
+                    return event.topic === 'todo.add' || event.topic === 'todo.clear' || event.topic === 'todo.clear';
                 }).pop();
 
                 if(lastAddEvent) {

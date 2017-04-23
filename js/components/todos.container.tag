@@ -39,11 +39,13 @@
             this.subscribe('sync', 'todo.add');
             this.subscribe('sync', 'todo.toggle');
             this.subscribe('sync', 'todo.toggle.all');
+            this.subscribe('sync', 'todo.clear');
         });
 
         this.toggle_all = function() {
             let lastTodoEvent = eventStore.events.filter( (event) => {
-                return event.topic === 'todo.add' || event.topic === 'todo.toggle' || event.topic === 'todo.toggle.all';
+                return event.topic === 'todo.add' || event.topic === 'todo.toggle'
+                    || event.topic === 'todo.toggle.all' || event.topic === 'todo.clear';
             }).pop();
 
             let atLeastOneIncomplete = lastTodoEvent.data.todos.find( (todo) => {
@@ -81,7 +83,8 @@
 
         this.toggle = function(id, completed){
             let lastToggleEvent = eventStore.events.filter( (event) => {
-                return event.topic === 'todo.toggle' || event.topic === 'todo.toggle.all';
+                return event.topic === 'todo.toggle' || event.topic === 'todo.toggle.all'
+                    || event.topic === 'todo.clear' || event.topic === 'todo.add';
             }).pop();
 
             let todos = [];

@@ -15,7 +15,7 @@
             </li>
         </ul>
         <!-- Hidden if no completed items are left ↓ -->
-        <button if={ completed_items > 0} class="clear-completed">Clear completed</button>
+        <button if={ completed_items > 0} onclick={ clear } class="clear-completed">Clear completed</button>
     </footer>
 
     <script>
@@ -27,13 +27,36 @@
 
         this.items_left = 0;
         this.subscriptions = {};
-        this.completed_items = false;
+        this.completed_items = 0;
 
         this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
             this.subscribe('sync', 'todo.toggle');
             this.subscribe('sync', 'todo.toggle.all');
+            this.subscribe('sync', 'todo.clear');
         });
+
+        this.clear = function() {
+            let lastToggleEvent = eventStore.events.filter( (event) => {
+                return event.topic === 'todo.toggle' || event.topic === 'todo.toggle.all';
+            }).pop();
+
+            let todos = lastToggleEvent.data.todos.filter( (todo) => {
+                return todo.completed === false;
+            });
+
+            let clearCompletedEvent = {
+                channel: "sync",
+                topic: `todo.clear`,
+                eventType: 'click',
+                data: {
+                    todos: todos,
+                    itemsLeft: todos.length
+                }
+            };
+
+            eventStore.add(clearCompletedEvent);
+        }.bind(this);
 
         this.subscribe = function(channel, topic) {
             let subscription = postal.subscribe({
@@ -67,6 +90,9 @@
                         state.itemsLeft = event.data.todos.length;
                         state.completedItems = 0;
                     }
+                } else if(event.topic === 'todo.clear'){
+                    state.itemsLeft = event.data.todos.length;
+                    state.completedItems = 0;
                 } else {
                     state.itemsLeft += event.data.itemsLeft;
                     state.completedItems += event.data.completedItems;
