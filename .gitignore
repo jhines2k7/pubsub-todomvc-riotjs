@@ -2,3 +2,4 @@
 /.idea/
 /node_modules/
 /dist/
+/pubsub-todomvc-riotjs.iml
