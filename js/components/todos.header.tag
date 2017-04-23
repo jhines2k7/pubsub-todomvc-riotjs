@@ -56,7 +56,8 @@
                     eventType: 'keyup',
                     data: {
                         todos: todos,
-                        itemsLeft: 1
+                        itemsLeft: 1,
+                        completedItems: 0
                     }
                 };
 

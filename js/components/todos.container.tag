@@ -88,8 +88,6 @@
             let todos = [];
 
             if(lastToggleEvent){
-                log("INFO", lastToggleEvent);
-
                 todos = lastToggleEvent.data.todos.map( (todo) => {
                     if(todo.id === id) {
                         todo.completed = !completed;
@@ -101,8 +99,6 @@
                 let lastAddEvent = eventStore.events.filter( (event) => {
                     return event.topic === 'todo.add';
                 }).pop();
-
-                log("INFO", lastAddEvent);
 
                 todos = lastAddEvent.data.todos.map( (todo) => {
                     if(todo.id === id) {
@@ -119,7 +115,7 @@
                 eventType: 'click',
                 data: {
                     todos: todos,
-                    completedItems: !completed === true ? -1 : 1,
+                    completedItems: !completed === true ? 1 : -1,
                     itemsLeft: !completed === true ? -1 : 1
                 }
             };
