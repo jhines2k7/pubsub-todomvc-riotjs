@@ -4,6 +4,6 @@
         <!-- This section should be hidden by default and shown when there are todos -->
         <todo-container></todo-container>
         <!-- This footer should hidden by default and shown when there are todos -->
-        <todos-footer></todos-footer>
+        <todo-footer></todo-footer>
     </section>
 </todo-app>
