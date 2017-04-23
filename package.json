@@ -1,7 +1,8 @@
 {
   "scripts": {
     "compile": "riot js  dist && webpack",
-    "render": "node render.js"
+    "render": "node render.js",
+    "watch": "http-server & watch npm run compile dist"
   },
   "dependencies": {
     "postal": "^2.0.5",
@@ -14,9 +15,11 @@
     "eslint": "^3.19.0",
     "glob": "^7.1.1",
     "http-server": "^0.9.0",
-    "webpack": "^1.12.3",
-    "webpack-bundle-analyzer": "^2.4.0",
     "todomvc-app-css": "^2.0.0",
-    "todomvc-common": "^1.0.0"
+    "todomvc-common": "^1.0.0",
+    "watch": "^1.0.2",
+    "watch-run": "^1.2.5",
+    "webpack": "^1.12.3",
+    "webpack-bundle-analyzer": "^2.4.0"
   }
 }

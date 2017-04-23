@@ -40,7 +40,7 @@
             this.subscriptions[topic] = subscription;
 
             return subscription;
-        }
+        };
 
         this.reduce = function(events) {
             return events.reduce(function(state, event){

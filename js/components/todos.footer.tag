@@ -15,7 +15,7 @@
             </li>
         </ul>
         <!-- Hidden if no completed items are left ↓ -->
-        <button class="clear-completed">Clear completed</button>
+        <button if={ completed_items > 0} class="clear-completed">Clear completed</button>
     </footer>
 
     <script>
@@ -27,11 +27,12 @@
 
         this.items_left = 0;
         this.subscriptions = {};
-        this.completedItems = false;
+        this.completed_items = false;
 
         this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
             this.subscribe('sync', 'todo.toggle');
+            this.subscribe('sync', 'todo.toggle.all');
         });
 
         this.subscribe = function(channel, topic) {
@@ -44,7 +45,7 @@
                     let state = this.reduce(events);
 
                     this.items_left = state.itemsLeft;
-                    this.completedItems = state.completedItems;
+                    this.completed_items = state.completedItems;
 
                     this.update();
 
@@ -58,16 +59,20 @@
 
         this.reduce = function(events) {
             return events.reduce(function(state, event){
-                if(event.topic === 'todo.add') {
-                    state.itemsLeft += event.data.itemsLeft;
-
-                    return state;
-                } else if(event.topic === 'todo.toggle') {
+                if(event.topic === 'todo.toggle.all') {
+                    if(event.data.markAllComplete === true) {
+                        state.itemsLeft = 0;
+                        state.completedItems = event.data.todos.length;
+                    } else {
+                        state.itemsLeft = event.data.todos.length;
+                        state.completedItems = 0;
+                    }
+                } else {
                     state.itemsLeft += event.data.itemsLeft;
                     state.completedItems += event.data.completedItems;
-
-                    return state;
                 }
+
+                return state;
             }, {
                 itemsLeft: 0,
                 completedItems: 0

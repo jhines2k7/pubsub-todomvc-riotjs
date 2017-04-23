@@ -72,7 +72,8 @@
                 data: {
                     todos: todos,
                     itemsLeft: markAllComplete === true ? 0 : todos.length,
-                    completedItems: markAllComplete === true ? todos.length : 0
+                    completedItems: markAllComplete === true ? todos.length : 0,
+                    markAllComplete: markAllComplete
                 }
             };
 
@@ -118,7 +119,7 @@
                 eventType: 'click',
                 data: {
                     todos: todos,
-                    completedItems: !completed === true ? 1 : -1,
+                    completedItems: !completed === true ? -1 : 1,
                     itemsLeft: !completed === true ? -1 : 1
                 }
             };
