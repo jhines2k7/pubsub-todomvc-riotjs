@@ -1,7 +1,7 @@
 <todo-footer>
     <footer class="footer">
         <!-- This should be `0 items left` by default -->
-        <span class="todo-count"><strong>{ items_left }</strong> items left</span>
+        <span class="todo-count"><strong>{ items_left }</strong> { items_left === 1 ? "item left" : "items left" }</span>
         <!-- Remove this if you don't implement routing -->
         <ul class="filters">
             <li>
