@@ -31,6 +31,7 @@
 
         this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
+            this.subscribe('sync', 'todo.toggle');
         });
 
         this.subscribe = function(channel, topic) {
@@ -59,6 +60,11 @@
             return events.reduce(function(state, event){
                 if(event.topic === 'todo.add') {
                     state.itemsLeft += event.data.itemsLeft;
+
+                    return state;
+                } else if(event.topic === 'todo.toggle') {
+                    state.itemsLeft += event.data.itemsLeft;
+                    state.completedItems += event.data.completedItems;
 
                     return state;
                 }

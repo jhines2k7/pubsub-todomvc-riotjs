@@ -34,13 +34,12 @@
         this.todos = [];
         this.subscriptions = {};
         this.markAllComplete = false;
+        this.completed = false;
 
         this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
-            this.subscribe('sync', 'todo.toggle.complete');
-            this.subscribe('sync', 'todo.toggle.incomplete');
-            this.subscribe('sync', 'todo.toggle.all.complete');
-            this.subscribe('sync', 'todo.toggle.all.incomplete');
+            this.subscribe('sync', 'todo.toggle');
+            this.subscribe('sync', 'todo.toggle.all');
         });
 
         this.toggle_all = function(markAllComplete) {
@@ -48,63 +47,39 @@
                 return event.topic === 'todo.add';
             }).pop();
 
-            let todos = [];
+            let todos = lastAddEvent.data.todos.map( (todo) => {
+                return {
+                    id: todo.id,
+                    content: todo.content,
+                    completed: !markAllComplete
+                };
+            });
 
-            let toggleAllEvent;
-
-            if(!markAllComplete === true) {
-                todos = lastAddEvent.data.todos.map( (todo) => {
-                    return {
-                        id: todo.id,
-                        content: todo.content,
-                        completed: true
-                    };
-                });
-
-                toggleAllEvent = {
-                    channel: "sync",
-                    topic: 'todo.toggle.all.complete',
-                    eventType: 'click',
-                    data: {
-                        todos: todos,
-                        markAllComplete: true,
-                        itemsLeft: 0,
-                        completedItems: todos.length
-                    }
+            let toggleAllEvent = {
+                channel: "sync",
+                topic: 'todo.toggle.all',
+                eventType: 'click',
+                data: {
+                    todos: todos,
+                    markAllComplete: !markAllComplete,
+                    itemsLeft: !markAllComplete === true ? 0 : todos.length,
+                    completedItems: !markAllComplete === true ? todos.length : 0
                 }
-            } else {
-                todos = lastAddEvent.data.todos.map( (todo) => {
-                    return {
-                        id: todo.id,
-                        content: todo.content,
-                        completed: false
-                    };
-                });
-
-                toggleAllEvent = {
-                    channel: "sync",
-                    topic: 'todo.toggle.all.incomplete',
-                    eventType: 'click',
-                    data: {
-                        todos: todos,
-                        markAllComplete: false,
-                        itemsLeft: todos.length,
-                        completedItems: 0
-                    }
-                }
-            }
+            };
 
             eventStore.add(toggleAllEvent);
         };
 
         this.toggle = function(id, completed){
             let lastToggleEvent = eventStore.events.filter( (event) => {
-                return event.topic === 'todo.toggle';
+                return event.topic === 'todo.toggle' || event.topic === 'todo.toggle.all';
             }).pop();
 
             let todos = [];
 
             if(lastToggleEvent){
+                log("INFO", lastToggleEvent);
+
                 todos = lastToggleEvent.data.todos.map( (todo) => {
                     if(todo.id === id) {
                         todo.completed = !completed;
@@ -117,6 +92,8 @@
                     return event.topic === 'todo.add';
                 }).pop();
 
+                log("INFO", lastAddEvent);
+
                 todos = lastAddEvent.data.todos.map( (todo) => {
                     if(todo.id === id) {
                         todo.completed = !completed;
@@ -126,35 +103,18 @@
                 });
             }
 
-            let todoToggleEvent;
+            let todoToggleEvent = {
+                channel: "sync",
+                topic: `todo.toggle`,
+                eventType: 'click',
+                data: {
+                    todos: todos,
+                    completedItems: !completed === true ? 1 : -1,
+                    itemsLeft: !completed === true ? -1 : 1
+                }
+            };
 
-            if(!completed === true) {
-                todoToggleEvent = {
-                    channel: "sync",
-                    topic: `todo.toggle.complete`,
-                    eventType: 'click',
-                    data: {
-                        todos: todos,
-                        completedItems: 1,
-                        itemsLeft: -1
-                    }
-                };
-
-                eventStore.add([todoToggleEvent]);
-            } else {
-                todoToggleEvent = {
-                    channel: "sync",
-                    topic: `todo.toggle.incomplete`,
-                    eventType: 'click',
-                    data: {
-                        todos: todos,
-                        completedItems: -1,
-                        itemsLeft: 1
-                    }
-                };
-
-                eventStore.add(todoToggleEvent);
-            }
+            eventStore.add(todoToggleEvent);
         };
 
         this.subscribe = function(channel, topic) {
@@ -177,7 +137,7 @@
             this.subscriptions[topic] = subscription;
 
             return subscription;
-        }
+        };
 
         this.reduce = function(events) {
             return events.reduce(function(state, event){
@@ -185,11 +145,11 @@
 
                 if(event.topic === 'todo.add') {
                     return state;
-                } else if(event.topic === 'todo.toggle.all.complete' || event.topic === 'todo.toggle.all.incomplete') {
+                } else if(event.topic === 'todo.toggle.all') {
                     state.markAllComplete = event.data.markAllComplete;
 
                     return state;
-                } else if(event.topic === 'todo.toggle.complete' || event.topic === 'todo.toggle.incomplete') {
+                } else if(event.topic === 'todo.toggle') {
                     return state;
                 }
             }, {
