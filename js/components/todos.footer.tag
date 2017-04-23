@@ -15,7 +15,7 @@
             </li>
         </ul>
         <!-- Hidden if no completed items are left ↓ -->
-        <button if={ completed_items > 0} onclick={ clear } class="clear-completed">Clear completed</button>
+        <button if={ completed_items > 0 } onclick={ clear } class="clear-completed">Clear completed</button>
     </footer>
 
     <script>
