@@ -1,9 +1,8 @@
 <todo-container>
     <section class="main">
-        <input class="toggle-all" type="checkbox">
+        <input id="toggle-all" class="toggle-all" type="checkbox">
         <label for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
-            <!-- These are here just to show the structure of the list items -->
             <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
             <li each={ todos } id={ id } class={ completed: completed }>
                 <div class="view">
@@ -17,7 +16,7 @@
     </section>
 
     <style>
-        .toggle-all::before {
+        #toggle-all::before {
             content: "❯";
             font-size: 22px;
             color: rgb(230, 230, 230);
