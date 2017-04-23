@@ -9,7 +9,7 @@
 
         import { log } from "../../js/util";
 
-        let eventStore = opts.event_store;;
+        let eventStore = opts.event_store;
 
         function guid() {
             return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
