@@ -98,7 +98,7 @@
                 } else if(event.topic === 'todo.clear'){
                     state.itemsLeft = event.data.todos.length;
                     state.completedItems = 0;
-                } else {
+                } else if(event.channel !== 'routing') {
                     state.itemsLeft += event.data.itemsLeft;
                     state.completedItems += event.data.completedItems;
                 }

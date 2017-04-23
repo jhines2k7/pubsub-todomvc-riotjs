@@ -42,8 +42,7 @@
                         return {
                             id: todo.id,
                             content: todo.content,
-                            completed: todo.completed,
-                            filter: lastRoutingEvent ? lastRoutingEvent.data.filter : 'all'
+                            completed: todo.completed
                         };
                     });
                 }
@@ -52,8 +51,7 @@
                 todos.push({
                     id: guid(),
                     content: todoContent,
-                    completed: false,
-                    filter: 'all'
+                    completed: false
                 });
 
                 let addTodoEvent = {
@@ -63,7 +61,8 @@
                     data: {
                         todos: todos,
                         itemsLeft: 1,
-                        completedItems: 0
+                        completedItems: 0,
+                        filter: lastRoutingEvent.data.filter
                     }
                 };
 
