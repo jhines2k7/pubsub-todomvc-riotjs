@@ -17,8 +17,9 @@
         this.subscriptions = {};
         this.num_todos = 0;
 
-        this.on('mount', function() {
+        this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
+            this.subscribe('sync', 'todo.clear');
         });
 
         this.subscribe = function(channel, topic) {

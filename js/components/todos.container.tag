@@ -33,7 +33,6 @@
 
         this.todos = [];
         this.subscriptions = {};
-        this.markAllComplete = false;
 
         this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
