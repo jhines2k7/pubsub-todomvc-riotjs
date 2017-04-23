@@ -53,7 +53,7 @@
 
             let markAllComplete = false;
 
-            if(typeof atLeastOneIncomplete === 'undefined') {
+            if(typeof atLeastOneIncomplete !== 'undefined') {
                 markAllComplete = true;
             }
 
