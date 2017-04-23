@@ -1,7 +1,7 @@
 <todo-container>
     <section class="main">
         <input id="toggle-all" class="toggle-all" type="checkbox">
-        <label onclick={ toggle_all.bind(null, markAllComplete) } for="toggle-all">Mark all as complete</label>
+        <label onclick={ toggle_all } for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
             <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
             <li each={ todos } id={ id } class={ completed: completed }>
@@ -42,16 +42,26 @@
             this.subscribe('sync', 'todo.toggle.all');
         });
 
-        this.toggle_all = function(markAllComplete) {
-            let lastAddEvent = eventStore.events.filter( (event) => {
-                return event.topic === 'todo.add';
+        this.toggle_all = function() {
+            let lastTodoEvent = eventStore.events.filter( (event) => {
+                return event.topic === 'todo.add' || event.topic === 'todo.toggle' || event.topic === 'todo.toggle.all';
             }).pop();
 
-            let todos = lastAddEvent.data.todos.map( (todo) => {
+            let atLeastOneIncomplete = lastTodoEvent.data.todos.find( (todo) => {
+                return todo.completed === false;
+            });
+
+            let markAllComplete = false;
+
+            if(typeof atLeastOneIncomplete === 'undefined') {
+                markAllComplete = true;
+            }
+
+            let todos = lastTodoEvent.data.todos.map( (todo) => {
                 return {
                     id: todo.id,
                     content: todo.content,
-                    completed: !markAllComplete
+                    completed: markAllComplete
                 };
             });
 
@@ -61,9 +71,8 @@
                 eventType: 'click',
                 data: {
                     todos: todos,
-                    markAllComplete: !markAllComplete,
-                    itemsLeft: !markAllComplete === true ? 0 : todos.length,
-                    completedItems: !markAllComplete === true ? todos.length : 0
+                    itemsLeft: markAllComplete === true ? 0 : todos.length,
+                    completedItems: markAllComplete === true ? todos.length : 0
                 }
             };
 
@@ -127,7 +136,6 @@
                     let state = this.reduce(events);
 
                     this.todos = state.todos;
-                    this.markAllComplete = state.markAllComplete;
 
                     this.update();
 
@@ -143,18 +151,9 @@
             return events.reduce(function(state, event){
                 state.todos = event.data.todos;
 
-                if(event.topic === 'todo.add') {
-                    return state;
-                } else if(event.topic === 'todo.toggle.all') {
-                    state.markAllComplete = event.data.markAllComplete;
-
-                    return state;
-                } else if(event.topic === 'todo.toggle') {
-                    return state;
-                }
+                return state;
             }, {
-                todos: [],
-                markAllComplete: false
+                todos: []
             });
         }
     </script>
