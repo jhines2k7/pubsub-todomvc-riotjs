@@ -32,16 +32,67 @@ window.addEventListener('load', router);
 route('/', function () {
     "use strict";
 
-    console.log('All controller fired');
+    let lastTodoEvent = eventStore.events.filter( (event) => {
+        return event.topic === 'todo.add' || event.topic === 'todo.toggle'
+            || event.topic === 'todo.toggle.all' || event.topic === 'todo.clear';
+    }).pop();
+
+    eventStore.add({
+        channel: 'routing',
+        topic: 'todo.filter.all',
+        eventType: 'click',
+        data: {
+            todos: lastTodoEvent && lastTodoEvent.data ? lastTodoEvent.data.todos : [],
+            itemsLeft: lastTodoEvent && lastTodoEvent.data ? lastTodoEvent.data.todos.length : 0,
+            filter: 'all'
+        }
+    });
 });
 
 route('/active', function () {
     "use strict";
-    console.log('Active controller fired');
+
+    let lastTodoEvent = eventStore.events.filter( (event) => {
+        return event.topic === 'todo.add' || event.topic === 'todo.toggle'
+            || event.topic === 'todo.toggle.all' || event.topic === 'todo.clear';
+    }).pop();
+
+    let todos = lastTodoEvent.data.todos.filter( (todo) => {
+        return todo.completed === false;
+    });
+
+    eventStore.add({
+        channel: 'routing',
+        topic: 'todo.filter.active',
+        eventType: 'click',
+        data: {
+            todos: todos,
+            itemsLeft: todos.length,
+            filter: 'active'
+        }
+    });
 });
 
 route('/completed', function () {
     "use strict";
 
-    console.log('Completed controller fired');
+    let lastTodoEvent = eventStore.events.filter( (event) => {
+        return event.topic === 'todo.add' || event.topic === 'todo.toggle'
+            || event.topic === 'todo.toggle.all' || event.topic === 'todo.clear';
+    }).pop();
+
+    let todos = lastTodoEvent.data.todos.filter( (todo) => {
+        return todo.completed === true;
+    });
+
+    eventStore.add({
+        channel: 'routing',
+        topic: 'todo.filter.completed',
+        eventType: 'click',
+        data: {
+            todos: todos,
+            itemsLeft: todos.length,
+            filter: 'completed'
+        }
+    });
 });

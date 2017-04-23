@@ -39,6 +39,9 @@
             this.subscribe('sync', 'todo.toggle');
             this.subscribe('sync', 'todo.toggle.all');
             this.subscribe('sync', 'todo.clear');
+            this.subscribe('routing', 'todo.filter.all');
+            this.subscribe('routing', 'todo.filter.active');
+            this.subscribe('routing', 'todo.filter.completed');
         });
 
         this.toggle_all = function() {

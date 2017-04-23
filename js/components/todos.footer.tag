@@ -5,13 +5,13 @@
         <!-- Remove this if you don't implement routing -->
         <ul class="filters">
             <li>
-                <a class="selected" href="#/">All</a>
+                <a class={ selected: filter == 'all' } href="#/">All</a>
             </li>
             <li>
-                <a href="#/active">Active</a>
+                <a class={ selected: filter == 'active' } href="#/active">Active</a>
             </li>
             <li>
-                <a href="#/completed">Completed</a>
+                <a class={ selected: filter == 'completed' } href="#/completed">Completed</a>
             </li>
         </ul>
         <!-- Hidden if no completed items are left ↓ -->
@@ -28,12 +28,16 @@
         this.items_left = 0;
         this.subscriptions = {};
         this.completed_items = 0;
+        this.filter = 'all';
 
         this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
             this.subscribe('sync', 'todo.toggle');
             this.subscribe('sync', 'todo.toggle.all');
             this.subscribe('sync', 'todo.clear');
+            this.subscribe('routing', 'todo.filter.all');
+            this.subscribe('routing', 'todo.filter.active');
+            this.subscribe('routing', 'todo.filter.completed');
         });
 
         this.clear = function() {
@@ -69,6 +73,7 @@
 
                     this.items_left = state.itemsLeft;
                     this.completed_items = state.completedItems;
+                    this.filter = state.filter;
 
                     this.update();
 
@@ -98,10 +103,13 @@
                     state.completedItems += event.data.completedItems;
                 }
 
+                state.filter = event.data.filter;
+
                 return state;
             }, {
                 itemsLeft: 0,
-                completedItems: 0
+                completedItems: 0,
+                filter: 'all'
             });
         }
     </script>

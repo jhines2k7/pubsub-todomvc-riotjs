@@ -33,12 +33,17 @@
                     return event.topic === 'todo.add' || event.topic === 'todo.clear' || event.topic === 'todo.clear';
                 }).pop();
 
+                let lastRoutingEvent = eventStore.events.filter( (event) => {
+                    return event.channel === 'routing';
+                }).pop();
+
                 if(lastAddEvent) {
                     todos = lastAddEvent.data.todos.map( (todo) => {
                         return {
                             id: todo.id,
                             content: todo.content,
-                            completed: todo.completed
+                            completed: todo.completed,
+                            filter: lastRoutingEvent ? lastRoutingEvent.data.filter : 'all'
                         };
                     });
                 }
@@ -47,7 +52,8 @@
                 todos.push({
                     id: guid(),
                     content: todoContent,
-                    completed: false
+                    completed: false,
+                    filter: 'all'
                 });
 
                 let addTodoEvent = {
