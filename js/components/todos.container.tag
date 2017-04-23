@@ -5,9 +5,9 @@
         <ul class="todo-list">
             <!-- These are here just to show the structure of the list items -->
             <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
-            <li each={ todos } id={ id } class="completed">
+            <li each={ todos } id={ id } class={ completed: completed }>
                 <div class="view">
-                    <input class="toggle" type="checkbox" checked>
+                    <input class="toggle" type="checkbox" checked={ completed }>
                     <label>{content}</label>
                     <button class="destroy"></button>
                 </div>
@@ -15,6 +15,15 @@
             </li>
         </ul>
     </section>
+
+    <style>
+        .toggle-all::before {
+            content: "❯";
+            font-size: 22px;
+            color: rgb(230, 230, 230);
+            padding: 10px 27px;
+        }
+    </style>
 
     <script>
         import postal from 'postal/lib/postal.lodash'
@@ -27,7 +36,7 @@
         this.subscriptions = {};
         this.markAsComplete = false;
 
-        this.on('mount', function() {
+        this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
         });
 
