@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "compile": "riot js  dist && webpack",
+    "render": "node render.js"
+  },
+  "dependencies": {
+    "postal": "^2.0.5",
+    "riot": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.1.4",
+    "babel-loader": "^6.1.0",
+    "babel-preset-es2015": "^6.1.4",
+    "eslint": "^3.19.0",
+    "glob": "^7.1.1",
+    "http-server": "^0.9.0",
+    "webpack": "^1.12.3",
+    "webpack-bundle-analyzer": "^2.4.0"
+  }
+}
