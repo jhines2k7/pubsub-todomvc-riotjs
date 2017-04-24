@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
-# clean the build directory
-if [ -d build-dev ]; then
-  rm build-dev/*
+# clean the dist directory
+if [ -d dist ]; then
+  rm -rf dist
 fi
 
-if [ ! -d build-dev ]; then
-  mkdir build-dev
+if [ ! -d dist ]; then
+  mkdir dist
 fi
 
-# js transform
-node_modules/.bin/webpack --config=webpack.config-dev.js
+# js compile and transform
+node_modules/.bin/riot js  dist && node_modules/.bin/webpack --config=webpack.config.js
+
 # timestamp = date +"%Y%m%d_%H%M%S"
 # append # to end of js file for cache busting
 

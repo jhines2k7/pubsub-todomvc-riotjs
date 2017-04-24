@@ -8,15 +8,15 @@ if [ ! -d "dist" ]; then
   mkdir dist
 fi
 
-# js transform
-node_modules/.bin/webpack --config=webpack.config.js
+# js compile and transform
+node_modules/.bin/riot js  dist && node_modules/.bin/webpack --config=webpack.config.js
 
 # copy index.html to dist directory
 cp index.html dist
 
-# copy css files to build directory
-cp node_modules/todomvc-app-css/index.css build
-cp node_modules/todomvc-common/base.css build
+# copy css files to dist directory
+cp node_modules/todomvc-app-css/index.css dist
+cp node_modules/todomvc-common/base.css dist
 
 # change the src property of the script tag to app.js
 sed -i 's/dist\/bundle.js/bundle.js/g' dist/index.html
