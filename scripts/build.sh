@@ -11,6 +11,9 @@ fi
 # js compile and transform
 node_modules/.bin/riot js  dist && node_modules/.bin/webpack --config=webpack.config.js
 
+#delete the components directory
+rm -rf dist/components
+
 # copy index.html to dist directory
 cp index.html dist
 
