@@ -55,7 +55,7 @@
                 eventType: 'click',
                 data: {
                     todos: todos,
-                    itemsLeft: todos.length
+                    filter: this.filter
                 }
             };
 
@@ -70,8 +70,9 @@
                     let events = eventStore.filter(this.subscriptions);
 
                     let state = this.reduce(events);
+                    let itemsLeft;
 
-                    this.items_left = state.itemsLeft;
+                    this.items_left = ;
                     this.completed_items = state.completedItems;
                     this.filter = state.filter;
 

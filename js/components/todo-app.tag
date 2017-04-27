@@ -45,11 +45,12 @@
 
         this.reduce = function(events) {
             return events.reduce(function(state, event){
-                state.num_todos = event.data.todos.length;
+                state.num_todos = event.state.todos.length;
 
                 return state;
             }, {
-                num_todos: 0
+                todos: [],
+                filter: 'all'
             });
         }
     </script>

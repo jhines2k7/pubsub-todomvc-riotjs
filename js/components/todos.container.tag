@@ -32,6 +32,8 @@
         let eventStore = opts.event_store;
 
         this.todos = [];
+        this.filter = '';
+
         this.subscriptions = {};
 
         this.on('before-mount', function() {
@@ -50,7 +52,7 @@
                     || event.topic === 'todo.toggle.all' || event.topic === 'todo.clear';
             }).pop();
 
-            let atLeastOneIncomplete = lastTodoEvent.data.todos.find( (todo) => {
+            let atLeastOneIncomplete = lastTodoEvent.state.todos.find( (todo) => {
                 return todo.completed === false;
             });
 
@@ -60,7 +62,7 @@
                 markAllComplete = true;
             }
 
-            let todos = lastTodoEvent.data.todos.map( (todo) => {
+            let todos = lastTodoEvent.state.todos.map( (todo) => {
                 return {
                     id: todo.id,
                     content: todo.content,
@@ -69,14 +71,12 @@
             });
 
             let toggleAllEvent = {
-                channel: "sync",
+                channel: 'sync',
                 topic: 'todo.toggle.all',
                 eventType: 'click',
                 data: {
                     todos: todos,
-                    itemsLeft: markAllComplete === true ? 0 : todos.length,
-                    completedItems: markAllComplete === true ? todos.length : 0,
-                    markAllComplete: markAllComplete
+                    filter: this.filter
                 }
             };
 
@@ -92,7 +92,7 @@
             let todos = [];
 
             if(lastToggleEvent){
-                todos = lastToggleEvent.data.todos.map( (todo) => {
+                todos = lastToggleEvent.state.todos.map( (todo) => {
                     if(todo.id === id) {
                         todo.completed = !completed;
                     }
@@ -104,7 +104,7 @@
                     return event.topic === 'todo.add';
                 }).pop();
 
-                todos = lastAddEvent.data.todos.map( (todo) => {
+                todos = lastAddEvent.state.todos.map( (todo) => {
                     if(todo.id === id) {
                         todo.completed = !completed;
                     }
@@ -114,13 +114,12 @@
             }
 
             let todoToggleEvent = {
-                channel: "sync",
-                topic: `todo.toggle`,
+                channel: 'sync',
+                topic: 'todo.toggle',
                 eventType: 'click',
                 data: {
                     todos: todos,
-                    completedItems: !completed === true ? 1 : -1,
-                    itemsLeft: !completed === true ? -1 : 1
+                    filter: this.filter
                 }
             };
 
@@ -137,6 +136,7 @@
                     let state = this.reduce(events);
 
                     this.todos = state.todos;
+                    this.filter = state.filter;
 
                     this.update();
 
@@ -150,11 +150,13 @@
 
         this.reduce = function(events) {
             return events.reduce(function(state, event){
-                state.todos = event.data.todos;
+                state.todos = event.data.state.todos;
+                state.filter = event.data.state.filter;
 
                 return state;
             }, {
-                todos: []
+                todos: [],
+                filter: 'all'
             });
         }
     </script>

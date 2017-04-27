@@ -41,9 +41,8 @@ route('/', function () {
         channel: 'routing',
         topic: 'todo.filter.all',
         eventType: 'click',
-        data: {
+        state: {
             todos: lastTodoEvent && lastTodoEvent.data ? lastTodoEvent.data.todos : [],
-            itemsLeft: lastTodoEvent && lastTodoEvent.data ? lastTodoEvent.data.todos.length : 0,
             filter: 'all'
         }
     });
@@ -65,9 +64,8 @@ route('/active', function () {
         channel: 'routing',
         topic: 'todo.filter.active',
         eventType: 'click',
-        data: {
+        state: {
             todos: todos,
-            itemsLeft: todos.length,
             filter: 'active'
         }
     });
@@ -91,7 +89,6 @@ route('/completed', function () {
         eventType: 'click',
         data: {
             todos: todos,
-            itemsLeft: todos.length,
             filter: 'completed'
         }
     });

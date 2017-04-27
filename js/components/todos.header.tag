@@ -58,10 +58,8 @@
                     channel: "sync",
                     topic: "todo.add",
                     eventType: 'keyup',
-                    data: {
+                    state: {
                         todos: todos,
-                        itemsLeft: 1,
-                        completedItems: 0,
                         filter: lastRoutingEvent.data.filter
                     }
                 };
