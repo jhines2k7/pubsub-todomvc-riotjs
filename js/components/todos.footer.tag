@@ -70,7 +70,9 @@
                     let events = eventStore.filter(this.subscriptions);
 
                     let state = this.reduce(events);
-                    let itemsLeft;
+                    let itemsLeft = state.todos.map( (todo) => {
+                        return todo.completed === false;
+                    });
 
                     this.items_left = ;
                     this.completed_items = state.completedItems;
