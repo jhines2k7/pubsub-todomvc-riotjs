@@ -1,4 +1,4 @@
-import postal from 'postal/lib/postal.lodash'
+import postal from 'postal/lib/postal.lodash.min'
 
 export default class EventStore {
     constructor() {

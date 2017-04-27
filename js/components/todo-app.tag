@@ -8,7 +8,7 @@
     </section>
 
     <script>
-        import postal from 'postal/lib/postal.lodash'
+        import postal from 'postal/lib/postal.lodash.min'
 
         import { log } from "../../js/util";
 
