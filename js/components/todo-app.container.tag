@@ -32,7 +32,6 @@
         let eventStore = opts.event_store;
 
         this.todos = [];
-        this.filter = '';
 
         this.subscriptions = {};
 
@@ -76,7 +75,9 @@
                 eventType: 'click',
                 data: {
                     todos: todos,
-                    filter: this.filter
+                    filter: this.filter,
+                    completedTodos: markAllComplete === true ? todos.length : 0,
+                    markAllComplete: markAllComplete
                 }
             };
 
@@ -90,8 +91,9 @@
             }).pop();
 
             let todos = [];
+            let lastAddEvent = {};
 
-            if(lastToggleEvent){
+            if(typeof lastToggleEvent !== 'undefined'){
                 todos = lastToggleEvent.state.todos.map( (todo) => {
                     if(todo.id === id) {
                         todo.completed = !completed;
@@ -100,7 +102,7 @@
                     return todo;
                 });
             } else {
-                let lastAddEvent = eventStore.events.filter( (event) => {
+                lastAddEvent = eventStore.events.filter( (event) => {
                     return event.topic === 'todo.add';
                 }).pop();
 
@@ -117,9 +119,11 @@
                 channel: 'sync',
                 topic: 'todo.toggle',
                 eventType: 'click',
-                data: {
+                state: {
                     todos: todos,
-                    filter: this.filter
+                    filter: this.filter,
+                    completedTodos: !completed === true ? todos.length + 1 : todos.length - 1,
+                    markAllComplete: typeof lastToggleEvent !== 'undefined' ? lastToggleEvent.state.markAllComplete : lastAddEvent.state.markAllComplete
                 }
             };
 
@@ -136,7 +140,6 @@
                     let state = this.reduce(events);
 
                     this.todos = state.todos;
-                    this.filter = state.filter;
 
                     this.update();
 
@@ -150,13 +153,11 @@
 
         this.reduce = function(events) {
             return events.reduce(function(state, event){
-                state.todos = event.data.state.todos;
-                state.filter = event.data.state.filter;
+                state.todos = event.state.todos;
 
                 return state;
             }, {
-                todos: [],
-                filter: 'all'
+                todos: []
             });
         }
     </script>

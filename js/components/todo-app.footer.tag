@@ -1,8 +1,7 @@
 <todo-footer>
     <footer class="footer">
-        <!-- This should be `0 items left` by default -->
-        <span class="todo-count"><strong>{ items_left }</strong> { items_left === 1 ? "item left" : "items left" }</span>
-        <!-- Remove this if you don't implement routing -->
+        <span class="todo-count"><strong>{ left_todo }</strong> { left_todo === 1 ? "todo left" : "todos left" }</span>
+
         <ul class="filters">
             <li>
                 <a class={ selected: filter == 'all' } href="#/">All</a>
@@ -14,8 +13,8 @@
                 <a class={ selected: filter == 'completed' } href="#/completed">Completed</a>
             </li>
         </ul>
-        <!-- Hidden if no completed items are left ↓ -->
-        <button if={ completed_items > 0 } onclick={ clear } class="clear-completed">Clear completed</button>
+        <!-- Hidden if no completed todos are left ↓ -->
+        <button if={ completed_todos > 0 } onclick={ clear } class="clear-completed">Clear completed</button>
     </footer>
 
     <script>
@@ -25,10 +24,11 @@
 
         let eventStore = opts.event_store;
 
-        this.items_left = 0;
+        this.left_todo = 0;
         this.subscriptions = {};
-        this.completed_items = 0;
+        this.completed_todos = 0;
         this.filter = 'all';
+        this.markAllComplete;
 
         this.on('before-mount', function() {
             this.subscribe('sync', 'todo.add');
@@ -45,17 +45,19 @@
                 return event.topic === 'todo.toggle' || event.topic === 'todo.toggle.all';
             }).pop();
 
-            let todos = lastToggleEvent.data.todos.filter( (todo) => {
+            let todos = lastToggleEvent.state.todos.filter( (todo) => {
                 return todo.completed === false;
             });
 
             let clearCompletedEvent = {
-                channel: "sync",
-                topic: `todo.clear`,
+                channel: 'sync',
+                topic: 'todo.clear',
                 eventType: 'click',
-                data: {
+                state: {
                     todos: todos,
-                    filter: this.filter
+                    filter: this.filter,
+                    completedTodos: 0,
+                    markAllComplete: this.markAllComplete
                 }
             };
 
@@ -70,13 +72,11 @@
                     let events = eventStore.filter(this.subscriptions);
 
                     let state = this.reduce(events);
-                    let itemsLeft = state.todos.map( (todo) => {
-                        return todo.completed === false;
-                    });
 
-                    this.items_left = ;
-                    this.completed_items = state.completedItems;
+                    this.completed_todos = state.completedTodos;
                     this.filter = state.filter;
+                    this.left_todo = state.leftTodo;
+                    this.markAllComplete = state.markAllComplete;
 
                     this.update();
 
@@ -91,27 +91,27 @@
         this.reduce = function(events) {
             return events.reduce(function(state, event){
                 if(event.topic === 'todo.toggle.all') {
-                    if(event.data.markAllComplete === true) {
-                        state.itemsLeft = 0;
-                        state.completedItems = event.data.todos.length;
+                    if(event.state.markAllComplete === true) {
+                        state.leftTodo = 0;
+                        state.completedTodos = event.state.todos.length;
                     } else {
-                        state.itemsLeft = event.data.todos.length;
-                        state.completedItems = 0;
+                        state.leftTodo = event.state.todos.length;
+                        state.completedTodos = 0;
                     }
                 } else if(event.topic === 'todo.clear'){
-                    state.itemsLeft = event.data.todos.length;
-                    state.completedItems = 0;
+                    state.leftTodo = event.state.todos.length;
+                    state.completedTodos = 0;
                 } else if(event.channel !== 'routing') {
-                    state.itemsLeft += event.data.itemsLeft;
-                    state.completedItems += event.data.completedItems;
+                    state.leftTodo += (event.state.todos - event.state.completedTodos);
+                    state.completedTodos += event.state.completedTodos;
                 }
 
-                state.filter = event.data.filter;
+                state.filter = event.state.filter;
 
                 return state;
             }, {
-                itemsLeft: 0,
-                completedItems: 0,
+                leftTodo: 0,
+                completedTodos: 0,
                 filter: 'all'
             });
         }

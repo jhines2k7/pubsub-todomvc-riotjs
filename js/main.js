@@ -1,8 +1,8 @@
 /*global riot */
-import "../dist/components/todos";
-import "../dist/components/todos.header";
-import "../dist/components/todos.container";
-import "../dist/components/todos.footer";
+import "../dist/components/todo-app";
+import "../dist/components/todo-app.header";
+import "../dist/components/todo-app.container";
+import "../dist/components/todo-app.footer";
 
 import EventStore from './EventStore'
 
@@ -42,8 +42,10 @@ route('/', function () {
         topic: 'todo.filter.all',
         eventType: 'click',
         state: {
-            todos: lastTodoEvent && lastTodoEvent.data ? lastTodoEvent.data.todos : [],
-            filter: 'all'
+            todos: lastTodoEvent && lastTodoEvent.state ? lastTodoEvent.state.todos : [],
+            filter: 'all',
+            completedTodos: lastTodoEvent && lastTodoEvent.state ? lastTodoEvent.state.completedTodos : 0,
+            markAllComplete: lastTodoEvent && lastTodoEvent.state ? lastTodoEvent.state.markAllComplete : false
         }
     });
 });
@@ -56,7 +58,7 @@ route('/active', function () {
             || event.topic === 'todo.toggle.all' || event.topic === 'todo.clear';
     }).pop();
 
-    let todos = lastTodoEvent.data.todos.filter( (todo) => {
+    let todos = lastTodoEvent.state.todos.filter( (todo) => {
         return todo.completed === false;
     });
 
@@ -66,7 +68,9 @@ route('/active', function () {
         eventType: 'click',
         state: {
             todos: todos,
-            filter: 'active'
+            filter: 'active',
+            completedTodos: lastTodoEvent && lastTodoEvent.state ? lastTodoEvent.state.completedTodos : 0,
+            markAllComplete: lastTodoEvent && lastTodoEvent.state ? lastTodoEvent.state.markAllComplete : false
         }
     });
 });
@@ -79,7 +83,7 @@ route('/completed', function () {
             || event.topic === 'todo.toggle.all' || event.topic === 'todo.clear';
     }).pop();
 
-    let todos = lastTodoEvent.data.todos.filter( (todo) => {
+    let todos = lastTodoEvent.state.todos.filter( (todo) => {
         return todo.completed === true;
     });
 
@@ -89,7 +93,9 @@ route('/completed', function () {
         eventType: 'click',
         data: {
             todos: todos,
-            filter: 'completed'
+            filter: 'completed',
+            completedTodos: lastTodoEvent && lastTodoEvent.state ? lastTodoEvent.state.completedTodos : 0,
+            markAllComplete: lastTodoEvent && lastTodoEvent.state ? lastTodoEvent.state.markAllComplete : false
         }
     });
 });

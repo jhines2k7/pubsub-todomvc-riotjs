@@ -49,8 +49,7 @@
 
                 return state;
             }, {
-                todos: [],
-                filter: 'all'
+                num_todos: 0
             });
         }
     </script>

@@ -37,8 +37,14 @@
                     return event.channel === 'routing';
                 }).pop();
 
+                let completedTodos = 0;
+
                 if(lastAddEvent) {
                     todos = lastAddEvent.data.todos.map( (todo) => {
+                        if(todo.completed === true) {
+                            completedTodos++;
+                        }
+
                         return {
                             id: todo.id,
                             content: todo.content,
@@ -60,7 +66,9 @@
                     eventType: 'keyup',
                     state: {
                         todos: todos,
-                        filter: lastRoutingEvent.data.filter
+                        filter: lastRoutingEvent.state.filter,
+                        completedTodos: completedTodos,
+                        markAllComplete: lastRoutingEvent.state.markAllComplete
                     }
                 };
 
