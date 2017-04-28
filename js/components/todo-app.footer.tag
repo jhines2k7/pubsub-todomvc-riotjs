@@ -107,12 +107,14 @@
                 }
 
                 state.filter = event.state.filter;
+                state.markAllComplete = event.state.markAllComplete;
 
                 return state;
             }, {
                 leftTodo: 0,
                 completedTodos: 0,
-                filter: 'all'
+                filter: 'all',
+                markAlComplete: false
             });
         }
     </script>
