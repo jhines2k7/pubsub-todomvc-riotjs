@@ -91,7 +91,7 @@ route('/completed', function () {
         channel: 'routing',
         topic: 'todo.filter.completed',
         eventType: 'click',
-        data: {
+        state: {
             todos: todos,
             filter: 'completed',
             completedTodos: lastTodoEvent && lastTodoEvent.state ? lastTodoEvent.state.completedTodos : 0,

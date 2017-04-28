@@ -1,12 +1,12 @@
 <todo-container>
     <section class="main">
         <input id="toggle-all" class="toggle-all" type="checkbox">
-        <label onclick={ toggle_all } for="toggle-all">Mark all as complete</label>
+        <label onclick={ toggle_all.bind(this) } for="toggle-all">Mark all as complete</label>
         <ul class="todo-list">
             <!-- List items should get the class `editing` when editing and `completed` when marked as completed -->
             <li each={ todos } id={ id } class={ completed: completed }>
                 <div class="view">
-                    <input onclick={ toggle.bind(null, id, completed) } class="toggle" type="checkbox" checked={ completed }>
+                    <input onclick={ toggle.bind(this, id, completed) } class="toggle" type="checkbox" checked={ completed }>
                     <label>{content}</label>
                     <button class="destroy"></button>
                 </div>
@@ -32,6 +32,7 @@
         let eventStore = opts.event_store;
 
         this.todos = [];
+        this.filter = 'all';
 
         this.subscriptions = {};
 
@@ -73,7 +74,7 @@
                 channel: 'sync',
                 topic: 'todo.toggle.all',
                 eventType: 'click',
-                data: {
+                state: {
                     todos: todos,
                     filter: this.filter,
                     completedTodos: markAllComplete === true ? todos.length : 0,
@@ -140,6 +141,7 @@
                     let state = this.reduce(events);
 
                     this.todos = state.todos;
+                    this.filter = state.filter;
 
                     this.update();
 
@@ -154,10 +156,12 @@
         this.reduce = function(events) {
             return events.reduce(function(state, event){
                 state.todos = event.state.todos;
+                state.filter = event.state.filter;
 
                 return state;
             }, {
-                todos: []
+                todos: [],
+                filter: 'all'
             });
         }
     </script>

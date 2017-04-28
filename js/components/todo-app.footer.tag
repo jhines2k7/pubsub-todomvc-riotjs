@@ -102,7 +102,7 @@
                     state.leftTodo = event.state.todos.length;
                     state.completedTodos = 0;
                 } else if(event.channel !== 'routing') {
-                    state.leftTodo += (event.state.todos - event.state.completedTodos);
+                    state.leftTodo = (event.state.todos.length - event.state.completedTodos);
                     state.completedTodos += event.state.completedTodos;
                 }
 

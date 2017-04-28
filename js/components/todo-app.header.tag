@@ -40,7 +40,7 @@
                 let completedTodos = 0;
 
                 if(lastAddEvent) {
-                    todos = lastAddEvent.data.todos.map( (todo) => {
+                    todos = lastAddEvent.state.todos.map( (todo) => {
                         if(todo.completed === true) {
                             completedTodos++;
                         }
